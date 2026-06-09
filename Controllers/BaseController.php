@@ -2,28 +2,43 @@
 
 class BaseController
 {
-    protected function validateQuery(array $parameters ) : bool{
+    protected function validateQuery(array $parameters ) : array{
 
         $method = $_SERVER["REQUEST_METHOD"];
+
+        $params["GET"] = [];
+        $params["POST"] = [];
 
         foreach( $parameters as $key => $value ){
             $exploded_value = explode("|", $value );
             
-            if( in_array("required", $exploded_value ) 
-                && $method === "GET" && !isset($_GET[$key])){
-                throw new \Exception("Required GET parameter not set: " . $key);
+            if( $method === "GET"){
+                if( in_array("required", $exploded_value ) 
+                    && !isset($_GET[$key])){
+                    //exit with error code
+                    throw new \Exception("Required GET parameter not set: " . $key);
+                }else
+                {
+                    $params["GET"][$key] = $_GET[$key];
+                    }
             }
-
-            if( in_array("required", $exploded_value ) 
-                && $method === "POST" && !isset($_POST[$key])){
-                throw new \Exception("Required POST parameter not set: " . $key);
+                    
+            if($method === "POST"){
+                if( in_array("required", $exploded_value ) 
+                    && !isset($_POST[$key])){
+                    //exit with error code
+                    throw new \Exception("Required POST parameter not set: " . $key);
+                }else
+                {
+                    $params["POST"][$key] = $_POST[$key];
+                }
             }
         }
 
-        return true;
+        return $params;
     }
 
-    protected function validateFiles() : bool
+    protected function validateFiles() : array
     {
         $files = $_FILES;
         
@@ -37,7 +52,12 @@ class BaseController
             }
         }
 
-        return true;
+        return $files["file"];
+    }
+
+    protected function exitWithStatus(string $status, string $message = "", array $objects = []) : void
+    {
+        exit(json_encode(["status" => $status,"message"=> $message, "data" => $objects]));
     }
 
 }

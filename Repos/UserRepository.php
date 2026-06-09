@@ -10,7 +10,7 @@ class UserRepository extends BaseRepository
         parent::__construct();
     }
 
-    public function getUser(int $id) : array
+    public function getUser(int $id) : array|false
     {
         $query = $this->pdo->prepare("select * from users where id = :id");
         $query->execute(["id" => $id]);
@@ -61,14 +61,15 @@ class UserRepository extends BaseRepository
     }
 
 
-    public function createRootNode(string $root) : int
+    public function createRootNode(string $root, int $userId) : int
     {
-        $query = $this->pdo->prepare("insert into Nodes (name, is_folder, parent_id, storage_path, size, created_at)
-            VALUES (:name, :is_folder, :parent_id, :storage_path, :size, :created_at)");
+        $query = $this->pdo->prepare("insert into Nodes (name, user_id, is_folder, parent_id, storage_path, size, created_at)
+            VALUES (:name, :user_id, :is_folder, :parent_id, :storage_path, :size, :created_at)");
 
         $query->execute(
             [
-                "name"=> $root,
+                'name' => $root,
+                'user_id' => $userId,
                 'is_folder' => true,
                 'parent_id' => NULL,
                 'storage_path' => 'test',

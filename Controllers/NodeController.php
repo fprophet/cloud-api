@@ -11,31 +11,48 @@ class NodeController extends BaseController
         $this->service = new NodeService();
     }
 
-    public function getNodes(){
-
-        $this->validateQuery(["userId" => "required"]);
-
-        echo json_encode(["message" => "this is the file route"]);
-    }
-
-    public function saveFile(){
-
-        $this->validateFiles();
-
-        $this->service->moveFiles($_FILES['file']);
-    }
-
-    public function createDirNode()
+    public function getNodes() : void
     {
-        $this->validateQuery(['parentId'=> 'required', "nodeName" => "required"]);
 
-        $created = $this->service->createDirNode($_POST["parentId"], $_POST["nodName"]);
+        $params = $this->validateQuery(["userId" => "required"]);
+
+        $this->exitWithStatus("success", "this is the file route");
+    }
+
+    public function saveFiles() : void
+    {
+
+        $files = $this->validateFiles();
+
+        $params = $this->validateQuery(['parentId' => 'required', 'userId' => 'requried']);
+
+        if(!$this->service->moveFiles($files, $params["POST"]["userId"])){
+            $this->exitWithStatus('failure','could not upload files!');
+        }
+
+        if(!$this->service->createFileNodes($files, $params["POST"]['parentId'], $params["POST"]['userId'])){
+            $this->exitWithStatus('failure','could not create nodes!');
+        }
+
+        $this->exitWithStatus('success','files uploaded!');
+    }
+
+    public function createDirNode() : void
+    {
+        $params = $this->validateQuery(['parentId'=> 'required', 'userId' => 'requried', "nodeName" => "required"]);
+
+        $created = $this->service->createDirNode($params["POST"]["parentId"], $params["POST"]['userId'], $params["POST"]["nodName"]);
 
         if($created){
-            exit(json_encode(["status" => "success", "message"=> "node created!"]));
+            $this->exitWithStatus("success", "node created!");
         };
 
-        exit(json_encode(["status"=> "failure","message"=> "could not create node!"]));
+        $this->exitWithStatus("failure", "could not create node!");
+    }
+
+    public function deleteNode() : void
+    {
+        $params = $this->validateQuery(["nodeId"=> "required",]);
     }
 }
 

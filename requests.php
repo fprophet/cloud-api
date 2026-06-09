@@ -9,7 +9,7 @@ $router = new Router();
 $router->get("/files", [NodeController::class, "getNodes"]);
 $router->get("/users", [UserController::class, "getUsers"]);
 
-$router->post("/upload", [NodeController::class, "saveFile"]);
+$router->post("/upload", [NodeController::class, "saveFiles"]);
 $router->post("/files", [NodeController::class, "createDirNode"]);
 $router->post("/users", [UserController::class, "addUsers"]);
 

@@ -4,12 +4,13 @@ require_once("database.php");
     class BaseRepository{
         protected PDO $pdo;
 
+        protected DatabaseConnection $db;
 
         public function __construct(
         ){
-            $dbConnection =  new DatabaseConnection();
+            $this->db =  new DatabaseConnection();
         
-            $this->pdo = $dbConnection->GetConnection();
+            $this->pdo = $this->db->GetConnection();
         }
 
         
@@ -24,6 +25,7 @@ require_once("database.php");
         public function Commit(){
             return $this->pdo->commit();
         }
+
     }
 
 ?>

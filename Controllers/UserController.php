@@ -4,28 +4,28 @@ require_once("Services/UserService.php");
 
 class UserController extends BaseController
 {
-    public function getUsers(){
+    public function getUsers() : void
+    {
 
         $service = new UserService();
         $users = $service->getUsers();
-        echo json_encode(["status"=> "success","message"=> $users]);
+        $this->exitWithStatus("success", "", $users);
     }
 
 
-    public function addUsers(){
+    public function addUsers() : void
+    {
         
-        $this->validateQuery(['name' => 'required', 'email'=> 'required','password'=> 'required']);
-
-        $userData = $_POST;
+        $params = $this->validateQuery(['name' => 'required', 'email'=> 'required','password'=> 'required']);
 
         $service = new UserService();
 
-        $userId = $service->addUser($userData);
+        $userId = $service->addUser($params["POST"]);
 
         if($userId > 0){
-            echo json_encode(['status'=> 'success','message'=> 'user created!']);
+            $this->exitWithStatus('success', 'user created!');
         }else{
-            echo json_encode(['status'=> 'error','message'=> 'failed to created user']);
+            $this->exitWithStatus('error', 'failed to created user');
         }
     }
 }

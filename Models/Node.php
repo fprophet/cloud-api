@@ -3,6 +3,8 @@
 class Node
 {
         public int $id;
+        
+        public int $user_id;
 
         public string $name;
 
@@ -21,6 +23,7 @@ class Node
         {
             $node = new self();
             $node->id = $row["id"];
+            $node->user_id = $row["user_id"];
             $node->name = $row["name"];
             $node->isFolder = $row["is_folder"];
             $node->parentId = $row["parent_id"];

@@ -2,13 +2,13 @@
 
 class User
 {
-    public $id;
-    public $name;
-    public $email;
-    public $password;
-    public $created_at;
-    public $root_directory;
-    public $root_node_id;
+    public int $id;
+    public string $name;
+    public string $email;
+    public string $password;
+    public int $created_at;
+    public string $root_directory;
+    public int $root_node_id;
 
     public static function fromDbRow(array $row) : User
     {
