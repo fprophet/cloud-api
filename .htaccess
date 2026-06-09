@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /cloud-api/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*)$ requests.php [L,QSA]
