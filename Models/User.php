@@ -8,6 +8,7 @@ class User
     public $password;
     public $created_at;
     public $root_directory;
+    public $root_node_id;
 
     public static function fromDbRow(array $row) : User
     {
@@ -18,6 +19,7 @@ class User
         $user->password = $row["password"];
         $user->created_at = $row["created_at"];
         $user->root_directory = $row["root_directory"];
+        $user->root_node_id = $row["root_node_id"];
 
         return $user;
     }

@@ -4,7 +4,6 @@ require_once("Repos/UserRepository.php");
 require_once("Core/config.php");
 
 
-
 class UserService 
 {
     private UserRepository $repo;
@@ -19,8 +18,21 @@ class UserService
         return $this->repo->getUsers();
     }
 
+    public function getUser(int $id) : ?User
+    {
+        $userData = $this->repo->getUser($id);
+        if ($userData === null || empty($userData)) {
+            return null;
+        }
+
+        return User::fromDbRow($userData);
+    }
+
     public function addUser(array $userData) : int
     {
+
+        $nodeService = new NodeService();
+        
         $userData['hashed_password'] = password_hash($userData['password'], PASSWORD_DEFAULT);
         $userData['created_at'] = time();
 
@@ -31,16 +43,9 @@ class UserService
 
             $rootDirectory = $userId  . "_" . $userData["created_at"];
 
-            var_dump(UPLOADS . DIRECTORY_SEPARATOR . $rootDirectory);
-            if( is_dir(UPLOADS . DIRECTORY_SEPARATOR . $rootDirectory) ){
-                throw new \Exception("A directory already exists for this user!");
-            }
+            $nodeId = $this->createRootNode($rootDirectory);
 
-            if( !mkdir(UPLOADS . DIRECTORY_SEPARATOR . $rootDirectory, 0, true) ){
-                throw new \Exception("Could not create directory for user!");
-            }
-
-            if( !$this->repo->updateUserRootDirectory($userId, $rootDirectory) ){
+            if( !$this->repo->updateUserRootDirectory($userId, $nodeId, $rootDirectory) ){
                 throw new \Exception("Could not update user directory path");
             }
 
@@ -58,6 +63,26 @@ class UserService
 
             return -1;
         }
+    }
+
+    private function createRootNode(string $rootDirectory) : int
+    {
+        //create the actual directory first
+        if( is_dir(UPLOADS . DIRECTORY_SEPARATOR . $rootDirectory) ){
+            throw new \Exception("A directory already exists for this user!");
+        }
+
+        if( !mkdir(UPLOADS . DIRECTORY_SEPARATOR . $rootDirectory, 0, true) ){
+            throw new \Exception("Could not create directory for user!");
+        }
+        
+        $nodeId = $this->repo->createRootNode($rootDirectory);
+
+        if($nodeId < 0){
+            throw new \Exception("Could not create root node!");
+        }
+
+        return $nodeId;
     }
 }
 

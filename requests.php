@@ -1,19 +1,19 @@
 <?php
 require_once("Core/router.php");
 
-require_once("Controllers/FileController.php");
+require_once("Controllers/NodeController.php");
 require_once("Controllers/UserController.php");
 
 $router = new Router();
 
-$router->get("/files",[FileController::class, "getFiles"]);
-$router->get("/users",[UserController::class, "getUsers"]);
+$router->get("/files", [NodeController::class, "getNodes"]);
+$router->get("/users", [UserController::class, "getUsers"]);
 
-$router->post("/files",[FileController::class, "saveFile"]);
-$router->post("/users",[UserController::class, "addUsers"]);
+$router->post("/upload", [NodeController::class, "saveFile"]);
+$router->post("/files", [NodeController::class, "createDirNode"]);
+$router->post("/users", [UserController::class, "addUsers"]);
 
 
 $router->resolve();
-
 
 ?>
