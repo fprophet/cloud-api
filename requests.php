@@ -9,10 +9,14 @@ $router = new Router();
 $router->get("/files", [NodeController::class, "getNodes"]);
 $router->get("/users", [UserController::class, "getUsers"]);
 
-$router->post("/upload", [NodeController::class, "saveFiles"]);
+
+$router->post("/upload", [NodeController::class, "uploadFiles"]);
 $router->post("/files", [NodeController::class, "createDirNode"]);
 $router->post("/users", [UserController::class, "addUsers"]);
 
+$router->delete("/files/{id}", [NodeController::class, "deleteNode"]);
+
+$router->patch("/files/{nodeId}", [NodeController::class, "updateNode"]);
 
 $router->resolve();
 

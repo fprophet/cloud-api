@@ -26,7 +26,7 @@ class Node
             $node->user_id = $row["user_id"];
             $node->name = $row["name"];
             $node->isFolder = $row["is_folder"];
-            $node->parentId = $row["parent_id"];
+            $node->parentId = $row["parent_id"] ?? 0;
             $node->storagePath = $row["storage_path"];
             $node->size = $row["size"];
             $node->createdAt = $row["created_at"];

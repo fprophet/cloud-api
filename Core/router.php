@@ -26,6 +26,26 @@
 
         }
 
+        public function delete(string $path, array $controller) {
+            
+            $path = $this->normalize($path);
+
+            $this->routes["DELETE"][$path]= [
+                "controller"=> $controller,
+                ];
+
+        }
+
+        public function patch(string $path, array $controller) {
+            
+            $path = $this->normalize($path);
+
+            $this->routes["PATCH"][$path]= [
+                "controller"=> $controller,
+                ];
+
+        }
+
         private function normalize(string $path) : string{
             
             $normalizedPath = trim($path, "/");
@@ -37,23 +57,31 @@
         public function resolve()
         {
             $requestMethod = $_SERVER["REQUEST_METHOD"];
+            $requestUri    = $_SERVER["REQUEST_URI"];
+            $path          = parse_url($requestUri, PHP_URL_PATH);
 
-            $requestUri = $_SERVER["REQUEST_URI"];
-
-            $parsedUri = parse_url($requestUri);
-
-            $path = $parsedUri["path"] ;
-
-            if ( !isset( $this->routes[$requestMethod] ) 
-                || !array_key_exists($path, $this->routes[$requestMethod])){
+            if (!isset($this->routes[$requestMethod])) {
                 return $this->notFound();
             }
 
-            [$controllerClass, $method] = $this->routes[$requestMethod][$path]["controller"];
+            foreach ($this->routes[$requestMethod] as $routePath => $route) {
+                $params = [];
+                $pattern = preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $routePath);
+                $pattern = '#^' . $pattern . '$#';
+                if (preg_match($pattern, $path, $matches)) {
+                    // pull only named params
+                    foreach ($matches as $key => $value) {
+                        if (is_string($key)) $params[$key] = $value;
+                    }
 
-            $controller = new $controllerClass;
+                    [$controllerClass, $method] = $route["controller"];
+                    $controller = new $controllerClass;
+                    $controller->{$method}($params);
+                    return;
+                }
+            }
 
-            $controller->{$method}();
+            return $this->notFound();
         }
 
         private function notFound()

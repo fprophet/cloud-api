@@ -55,7 +55,6 @@ class UserService
         }
         catch( \Exception $e ){
 
-        var_dump($e);
             if( is_dir(UPLOADS . DIRECTORY_SEPARATOR . $rootDirectory) ){
                 rmdir(UPLOADS . DIRECTORY_SEPARATOR . $rootDirectory);
             }

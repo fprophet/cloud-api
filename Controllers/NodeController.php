@@ -19,19 +19,14 @@ class NodeController extends BaseController
         $this->exitWithStatus("success", "this is the file route");
     }
 
-    public function saveFiles() : void
+    public function uploadFiles() : void
     {
-
         $files = $this->validateFiles();
 
         $params = $this->validateQuery(['parentId' => 'required', 'userId' => 'requried']);
 
-        if(!$this->service->moveFiles($files, $params["POST"]["userId"])){
-            $this->exitWithStatus('failure','could not upload files!');
-        }
-
-        if(!$this->service->createFileNodes($files, $params["POST"]['parentId'], $params["POST"]['userId'])){
-            $this->exitWithStatus('failure','could not create nodes!');
+        if(!$this->service->uploadFiles($files, $params["POST"])) {
+            $this->exitWithStatus('failure',' could not upload files');
         }
 
         $this->exitWithStatus('success','files uploaded!');
@@ -39,9 +34,10 @@ class NodeController extends BaseController
 
     public function createDirNode() : void
     {
-        $params = $this->validateQuery(['parentId'=> 'required', 'userId' => 'requried', "nodeName" => "required"]);
+        $data = $this->getRequestData();
 
-        $created = $this->service->createDirNode($params["POST"]["parentId"], $params["POST"]['userId'], $params["POST"]["nodName"]);
+        //valdiate data and escape it
+        $created = $this->service->createDirNode($data);
 
         if($created){
             $this->exitWithStatus("success", "node created!");
@@ -50,10 +46,33 @@ class NodeController extends BaseController
         $this->exitWithStatus("failure", "could not create node!");
     }
 
-    public function deleteNode() : void
+    public function deleteNode(array $params) : void
     {
-        $params = $this->validateQuery(["nodeId"=> "required",]);
+        $this->validateParams($params);
+
+        $deleted = $this->service->deleteNode((int)$params["id"]);
+
+        if($deleted){
+            $this->exitWithStatus("success","node deleted");
+        }
+
+        $this->exitWithStatus("failure","cannot delete node");
+        
     }
+
+    public function updateNode(array $params) : void
+    {
+        $this->validateParams($params);
+
+        $data = $this->getRequestData(['name' => 'required']);
+
+        if( $this->service->updateNode($params["nodeId"], $data)){
+            $this->exitWithStatus("success","node update!");
+        }
+
+        $this->exitWithStatus("failure","could not update node!");
+    }
+
 }
 
 ?>

@@ -66,13 +66,15 @@ class UserRepository extends BaseRepository
         $query = $this->pdo->prepare("insert into Nodes (name, user_id, is_folder, parent_id, storage_path, size, created_at)
             VALUES (:name, :user_id, :is_folder, :parent_id, :storage_path, :size, :created_at)");
 
+        $storage_path = UPLOADS . DIRECTORY_SEPARATOR . $root;
+
         $query->execute(
             [
                 'name' => $root,
                 'user_id' => $userId,
                 'is_folder' => true,
                 'parent_id' => NULL,
-                'storage_path' => 'test',
+                'storage_path' => $storage_path,
                 'size' => 0,
                 'created_at' => time(),
             ]);
