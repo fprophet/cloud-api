@@ -84,6 +84,19 @@ class UserService
 
         return $nodeId;
     }
+
+    public function getUserByEmail(string $email) : ?User
+    {
+        $userData = $this->repo->getUserByEmail($email);
+
+        if( !$userData ){
+            return null;
+        }
+
+
+        return User::fromDbRow( $userData );
+
+    }
 }
 
 ?>

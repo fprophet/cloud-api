@@ -81,6 +81,15 @@ class UserRepository extends BaseRepository
 
         return (int)$this->pdo->lastInsertId();
     }
+
+
+    public function getUserByEmail(string $email) : array|bool
+    {
+        $query = $this->pdo->prepare('select * from users where email = :email');
+        $query->execute(['email'=> $email]);
+
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>

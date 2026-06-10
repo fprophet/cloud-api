@@ -17,6 +17,7 @@
                     PDO::ATTR_EMULATE_PREPARES => false,
                 ]
             );
+
         }
 
         public function GetConnection() : PDO{

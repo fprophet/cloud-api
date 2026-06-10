@@ -19,6 +19,16 @@ class NodeController extends BaseController
         $this->exitWithStatus("success", "this is the file route");
     }
 
+
+    public function getNodesForNode(array $params) : void
+    {
+        $this->validateParams($params);
+
+        $nodes = $this->service->getParentWithChildren($params["id"]);
+
+        $this->exitWithStatus("success","", $nodes);
+    }
+
     public function uploadFiles() : void
     {
         $files = $this->validateFiles();
@@ -72,7 +82,6 @@ class NodeController extends BaseController
 
         $this->exitWithStatus("failure","could not update node!");
     }
-
 }
 
 ?>

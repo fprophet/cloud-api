@@ -82,6 +82,7 @@ class NodeService
 
     public function getParentWithChildren(int $parentId) : array
     {
+
         $nodesData = $this->repo->getParentWithChildren($parentId);
 
         $nodes = [];
@@ -89,7 +90,6 @@ class NodeService
         foreach($nodesData as $nodeData){
             $nodes[] = Node::fromDbRow($nodeData);
         }
-        
         return $nodes;
     }
 
